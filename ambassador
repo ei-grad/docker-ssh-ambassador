@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+
+# required variables
+[ -z "${SSH_HOST}" ] && echo "Specify SSH_HOST env variable!" >&2 && exit 1
+[ -z "${SSH_USER}" ] && echo "Specify SSH_USER env variable!" >&2 && exit 1
+[ -z "${TARGET_PORT}" ] && echo "Specify TARGET_PORT env variable!" >&2 && exit 1
+
+# default variables
+[ -z "${TARGET_HOST}" ] && TARGET_HOST=127.0.0.1
+[ -z "${SSH_PORT}" ] && SSH_PORT=22
+[ -z "${EXPOSED_PORT}" ] && EXPOSED_PORT=${TARGET_PORT}
+
+exec ssh \
+    -nN \
+    -L 0.0.0.0:${EXPOSED_PORT}:${TARGET_HOST}:${TARGET_PORT} \
+    -o UserKnownHostsFile=/dev/null \
+    -o StrictHostKeyChecking=no \
+    -p ${SSH_PORT} \
+    ${SSH_USER}@${SSH_HOST}
