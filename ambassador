@@ -2,20 +2,39 @@
 
 set -e
 
-# required variables
-[ -z "${SSH_HOST}" ] && echo "Specify SSH_HOST env variable!" >&2 && exit 1
-[ -z "${SSH_USER}" ] && echo "Specify SSH_USER env variable!" >&2 && exit 1
-[ -z "${TARGET_PORT}" ] && echo "Specify TARGET_PORT env variable!" >&2 && exit 1
+[ $# -ge 2 ] && [ -z "`echo $2 | tr -d '[0-9]'`" ] || cat << EOF
 
-# default variables
-[ -z "${TARGET_HOST}" ] && TARGET_HOST=127.0.0.1
-[ -z "${SSH_PORT}" ] && SSH_PORT=22
-[ -z "${EXPOSED_PORT}" ] && EXPOSED_PORT=${TARGET_PORT}
+  Usage:
 
-exec ssh \
-    -nN \
-    -L 0.0.0.0:${EXPOSED_PORT}:${TARGET_HOST}:${TARGET_PORT} \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    -p ${SSH_PORT} \
-    ${SSH_USER}@${SSH_HOST}
+    docker run \\
+      -v <keys_and_known_hosts_directory>:/keys \\
+      eigrad/ssh-ambassador <user@host> <service_port> \\
+      [additional ssh parameters]
+
+  Default ssh_config expects to find the id_rsa key and the known_hosts file in
+  the /keys directory. Password authentication and host key adding are disabled
+  (ensure that the key of the host where you would like to connect is already
+  added to the known_hosts file, and that /keys/id_rsa).
+
+  Environment variables:
+
+    TARGET_HOST:    host to connect on the remote side
+                    (default: localhost)
+
+    EXPOSED_PORT:   port to expose (bind) on the local side
+                    (default: equal to <service_port>)
+
+EOF
+
+HOST=$1
+PORT=$2
+
+shift 2
+
+[ -z "${TARGET_HOST}" ] && TARGET_HOST=localhost
+[ -z "${EXPOSED_PORT}" ] && EXPOSED_PORT=${PORT}
+if [ -z "${SSH_AUTH_SOCK}" ] ; then
+    [ -S /keys/agent.* ] && export SSH_AUTH_SOCK=/keys/agent.*
+fi
+
+exec ssh -nN -L 0.0.0.0:${EXPOSED_PORT}:${TARGET_HOST}:${PORT} $* ${HOST}

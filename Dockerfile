@@ -1,9 +1,10 @@
-FROM gliderlabs/alpine:3.1
+FROM alpine:latest
+MAINTAINER Andrew Grigorev <andrew@ei-grad.ru>
 ENTRYPOINT ["ambassador"]
-RUN apk update && apk-install openssh-client
-COPY ambassador /bin/ambassador
-RUN adduser -D ambassador
-ADD ssh_config /etc/ssh/ssh_config
-RUN install 0500 -o ambassador -d /keys
-
+RUN apk update && \
+    apk add openssh-client && \
+    adduser -D ambassador && \
+    install 0500 -o ambassador -d /keys
 USER ambassador
+COPY ambassador /bin/ambassador
+COPY ssh_config /etc/ssh/ssh_config
