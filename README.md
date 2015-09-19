@@ -1,5 +1,5 @@
-ei-grad/ssh-ambassador docker image
-===================================
+eigrad/ssh-ambassador docker image
+==================================
 
 Lightweight ssh client container based on alpine linux image. Suitable to be
 used as docker ambassador container for containers located on different hosts
