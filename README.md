@@ -50,4 +50,4 @@ License and contributing
 
 This docker container source files could be used under the BSD license. See LICENSE file for details.
 
-Issue reporting and ideas sharing are always welcome:"http://github.com/ei-grad/docker-ssh-ambassador/issues".
+Issue reporting and ideas sharing are always [welcome](http://github.com/ei-grad/docker-ssh-ambassador/issues).
