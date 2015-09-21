@@ -11,7 +11,7 @@ Example usage
 ```bash
 docker run -d \
   --name mysql_ambassador \
-  -v .ssh:/keys \
+  -v /root/.ssh:/keys \
   eigrad/ssh-ambassador root@db.example.com 3306 \
   -p 3022  # if ssh uses the custom port on server
 
@@ -31,7 +31,7 @@ number in the command:
 ```bash
 docker run -d \
   --name mysql_ambassador \
-  -v .ssh:/keys \
+  -v /root/.ssh:/keys \
   eigrad/ssh-ambassador example.com 12345 \
   -o StrictHostKeyChecking=no \
   -o UserKnownHostsFile=/dev/null
